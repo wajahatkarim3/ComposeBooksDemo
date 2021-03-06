@@ -88,7 +88,7 @@ fun HomeScreenContent(navController: NavController) {
             .padding(10.dp)
     ) {
         HomeSearchBar()
-        NewBooksHorizontalList()
+        NewBooksHorizontalList(navController)
         PopularBooksList(navController)
         VerticalSpace(value = 50.dp)
     }
@@ -130,12 +130,11 @@ fun PopularBookItem(bookModel: BookModel, navController: NavController) {
             .fillMaxWidth()
             .padding(bottom = 15.dp)
             .clickable {
-                navController.currentBackStackEntry?.arguments?.putParcelable("book", bookModel)
-                   navController.navigate("book_details")
+                gotoBookDetails(bookModel, navController)
             },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        NewBookItem(bookModel = bookModel, maxWidth = 60.dp)
+        NewBookItem(bookModel = bookModel, navController, maxWidth = 60.dp)
         Column(
             modifier = Modifier
                 .padding(start = 10.dp)
@@ -175,7 +174,7 @@ fun PopularBookItem(bookModel: BookModel, navController: NavController) {
 }
 
 @Composable
-fun NewBooksHorizontalList() {
+fun NewBooksHorizontalList(navController: NavController) {
     VerticalSpace(value = 20.dp)
     Text(
         text = "New Books",
@@ -192,14 +191,14 @@ fun NewBooksHorizontalList() {
         items(
             items = getBooksList(),
             itemContent = { item ->
-                NewBookItem(item)
+                NewBookItem(item, navController)
             }
         )
     }
 }
 
 @Composable
-fun NewBookItem(bookModel: BookModel, maxWidth: Dp = 140.dp) {
+fun NewBookItem(bookModel: BookModel, navController: NavController, maxWidth: Dp = 140.dp) {
     CoilImage(
         data = bookModel.coverUrl,
         contentDescription = "My content description",
@@ -214,7 +213,7 @@ fun NewBookItem(bookModel: BookModel, maxWidth: Dp = 140.dp) {
             )
             .clip(RoundedCornerShape(10.dp))
             .clickable {
-
+                gotoBookDetails(bookModel, navController)
             },
     )
 }
@@ -286,4 +285,9 @@ fun HomeSearchBar() {
             )
         }
     )
+}
+
+fun gotoBookDetails(bookModel: BookModel, navController: NavController) {
+    navController.currentBackStackEntry?.arguments?.putParcelable("book", bookModel)
+    navController.navigate("book_details")
 }
